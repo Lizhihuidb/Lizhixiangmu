@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-//你这个坑货
 /**
  * Created by BC021 on 2018/1/6.
  */
@@ -73,7 +72,7 @@ public class PdfAdapters extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) { //这个方法都执行不了  你看下什么问题
+    public View getView(int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
         View layout;
         if(convertView == null) {

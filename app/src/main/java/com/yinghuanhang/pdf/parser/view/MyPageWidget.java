@@ -11,6 +11,7 @@ import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.BaseAdapter;
@@ -21,7 +22,7 @@ public class MyPageWidget extends FrameLayout {
 
     private int mWidth = 0;
     private int mHeight = 0;
-    private int mCornerX = 0; // ÍÏ×§µã¶ÔÓ¦µÄÒ³½Å
+    private int mCornerX = 0;
     private int mCornerY = 0;
     private Path mPath0;
     private Path mPath1;
@@ -53,7 +54,8 @@ public class MyPageWidget extends FrameLayout {
     Matrix mMatrix;
     float[] mMatrixArray = {0, 0, 0, 0, 0, 0, 0, 0, 1.0f};
 
-    boolean mIsRTandLB;  // 是否属于右上左下
+    //true,从左往右边滑动,false从右边往左边滑动.
+    private boolean mIsRTandLB;
     float mMaxLength;
     int[] mBackShadowColors;// 背面颜色组
     int[] mFrontShadowColors;// 前面颜色组
@@ -69,17 +71,27 @@ public class MyPageWidget extends FrameLayout {
 
     Paint mPaint;
 
+    //创建一个具有默认持续时间和内插器的滚动体
     Scroller mScroller;
     private boolean isAnimated = false;
+
+    //当前的view
     private View currentView = null;
+    //下一页的view
     private View nextView = null;
+    //下一页转写本,副本的view
     private View nextViewTranscript = null;
     private Context mContext;
 
+    //数据的适配器.
     private BaseAdapter mAdapter = null;
     private int currentPosition = -1;
+
+    //签名册的总页数
     private int itemCount = 0;
     private OnPageTurnListener turnListener;
+    private OnPageBeforeTurnListener mBeforeTurnListener;
+    private String TAG = "MyPageWidget";
 
     public MyPageWidget(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -114,6 +126,7 @@ public class MyPageWidget extends FrameLayout {
 
     }
 
+    //手指触摸监听,是否消费触摸事件.
     private class FingerTouchListener implements OnTouchListener {
 
         @Override
@@ -123,18 +136,23 @@ public class MyPageWidget extends FrameLayout {
                     if (itemCount == 0) {
                         return false;
                     }
+                    //处理动画,并且回去滚动的情况.
                     abortAnimation();
+
+                    //计算拖拽脚.
                     calcCornerXY(event.getX(), event.getY());
-                    if (DragToRight()) {
-                        if (currentPosition == 0) {
+                    if (DragToRight()) {//从左边往右边拖动的时候.
+                        if (currentPosition == 0) {//第0页面则不处理滑动事件
+                            //标记归位.
                             mCornerX = 0;
                             mCornerY = 0;
                             return false;
                         }
+                        //复用nextView,nextViewTranscript,适配数据.回调了2次getView.
                         nextView = mAdapter.getView(currentPosition - 1, nextView, null);
                         nextViewTranscript = mAdapter.getView(currentPosition - 1, nextViewTranscript, null);
-                    } else {
-                        if (currentPosition == itemCount - 1) {
+                    } else { //从右边往左边拖动的时候.
+                        if (currentPosition == itemCount - 1) {//如果是最后1页则不处理滑动事件.
                             mCornerX = 0;
                             mCornerY = 0;
                             return false;
@@ -142,19 +160,25 @@ public class MyPageWidget extends FrameLayout {
                         if (currentPosition < 0) {
                             currentPosition = 0;
                         }
+                        //回调getView,展示下一页.
                         nextView = mAdapter.getView(currentPosition + 1, nextView, null);
                         nextViewTranscript = mAdapter.getView(currentPosition + 1, nextViewTranscript, null);
                     }
                     isAnimated = false;
                     mTouch.x = event.getX();
                     mTouch.y = event.getY();
+
+                    //跟新视图,显示下一页.
                     nextView.setVisibility(View.VISIBLE);
                     nextViewTranscript.setVisibility(View.VISIBLE);
                     MyPageWidget.this.postInvalidate();
 
-                } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                } else if (event.getAction() == MotionEvent.ACTION_MOVE) {//移动过程中
+                    //移动过程中获取x,y坐标.
                     float x = event.getX();
                     float y = event.getY();
+
+                    //将拖动点宽度控制在控件范围内部.
                     if (x > mWidth) {
                         mTouch.x = mWidth - 0.01f;
                     } else if (x < 0) {
@@ -163,6 +187,7 @@ public class MyPageWidget extends FrameLayout {
                         mTouch.x = x;
                     }
 
+                    //将拖动点高度控制在控件范围内部.
                     if (y > mHeight) {
                         mTouch.y = mHeight - 0.01f;
                     } else if (y < 0) {
@@ -170,13 +195,23 @@ public class MyPageWidget extends FrameLayout {
                     } else {
                         mTouch.y = y;
                     }
+                    //重新绘制视图.
                     MyPageWidget.this.postInvalidate();
 
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (canDragOver()) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {//手指抬起 的时候.
+                    if (canDragOver()) {//能够滑动翻页成功,
+                        //释放动画,释放滚动!
                         isAnimated = true;
                         startAnimation(100);//控制中间翻页速度
-                    } else {
+
+                        //翻页成功之前的回调.
+                        if (null != mBeforeTurnListener) {
+                            mBeforeTurnListener.onBeforeTurn(MyPageWidget.this.mIsRTandLB);
+                        }
+                        Log.i(TAG, "onTouch: ===>翻页成功");
+
+                    } else {//不能够滑动翻页
+                        //标记归位.
                         mTouch.x = 0.01f;
                         mTouch.y = 0.01f;
                         mCornerX = 0;
@@ -187,13 +222,10 @@ public class MyPageWidget extends FrameLayout {
                     MyPageWidget.this.postInvalidate();
                 }
                 return true;
-
             } else {
                 return false;
             }
-
         }
-
     }
 
     @Override
@@ -255,11 +287,15 @@ public class MyPageWidget extends FrameLayout {
             mCornerY = 0;
         else
             mCornerY = mHeight;
-        if ((mCornerX == 0 && mCornerY == mHeight)
-                || (mCornerX == mWidth && mCornerY == 0))
+        if ((mCornerX == 0 && mCornerY == mHeight) || (mCornerX == mWidth && mCornerY == 0))
             mIsRTandLB = true;
         else
             mIsRTandLB = false;
+        if (mIsRTandLB) {
+            Log.i(MyPageWidget.this.getClass().getSimpleName(), "mIsRTandLB: 手指滑动--->" + mIsRTandLB);
+        } else {
+            Log.i(MyPageWidget.this.getClass().getSimpleName(), "mIsRTandLB: 手指滑动--->" + mIsRTandLB);
+        }
     }
 
     /**
@@ -354,7 +390,7 @@ public class MyPageWidget extends FrameLayout {
         mBezierEnd2 = getCross(mTouch, mBezierControl2, mBezierStart1,
                 mBezierStart2);
 
-		/*
+        /*
          * mBeziervertex1.x 推导
          * ((mBezierStart1.x+mBezierEnd1.x)/2+mBezierControl1.x)/2 化简等价于
          * (mBezierStart1.x+ 2*mBezierControl1.x+mBezierEnd1.x) / 4
@@ -631,33 +667,50 @@ public class MyPageWidget extends FrameLayout {
         canvas.restore();
     }
 
-
+    //主要功能是计算拖动的位移量、更新背景
+    //重写computeScroll()的原因
+    //只有在computeScroll()获取滚动情况，做出滚动的响应
+    //computeScroll在父控件执行drawChild时，会调用这个方法
     @Override
     public void computeScroll() {
+        //获取新的滑动位置,true:动画还没有结束.
         if (mScroller.computeScrollOffset()) {
+            //获取当前滚动位置的x,y坐标,并且赋值给滚动点.更新视图.
             float x = mScroller.getCurrX();
             float y = mScroller.getCurrY();
             mTouch.x = x;
             mTouch.y = y;
             postInvalidate();
         }
+
+        //如果动画结束,并且滚动结束
         if (isAnimated && mScroller.isFinished()) {
+            //动画标记归位.
             isAnimated = false;
+
+            //往右边滑动,到上1页面.
             if (DragToRight()) {
                 currentPosition -= 1;
-            } else {
+            } else { //往左边滑动,到下1页面.
                 currentPosition += 1;
             }
+            //回调适配器getView,并且使用currentView作为convertView缓存视图,便于重新适配数据.同时更新索引.
             currentView = mAdapter.getView(currentPosition, currentView, null);
 
+            //触摸点归位.
             mTouch.x = 0.01f;
             mTouch.y = 0.01f;
             mCornerX = 0;
             mCornerY = 0;
+            //下一页面的view隐藏起来.
             nextView.setVisibility(View.INVISIBLE);
             nextViewTranscript.setVisibility(View.INVISIBLE);
+
+            //翻页结束,更新视图.
             postInvalidate();
+            //翻页回调.
             if (turnListener != null) {
+                Log.i(TAG, "turnListener: ===>翻页成功回调了");
                 turnListener.onTurn(itemCount, currentPosition);
             }
         }
@@ -685,6 +738,7 @@ public class MyPageWidget extends FrameLayout {
     }
 
 
+    //中止计划,动画.
     public void abortAnimation() {
         if (!mScroller.isFinished()) {
             mScroller.abortAnimation();
@@ -717,13 +771,21 @@ public class MyPageWidget extends FrameLayout {
         currentView = null;
         nextView = null;
         nextViewTranscript = null;
+
+        //清空视图页面.
         removeAllViews();
         if (itemCount != 0) {
+            //如果签名册的数量大于0,
+            //那么就添加并显示第1页
             currentPosition = 0;
             currentView = mAdapter.getView(currentPosition, null, null);
             addView(currentView);
 
+            //如果签名册的数量大于1条以上.则会初始化3个view条目.
             if (itemCount > 1) {
+                //如果签名册的数量大于1条以上.
+                //那么就添加并显示下1页
+                ////那么就添加并显示下1页副本.
                 nextView = mAdapter.getView(currentPosition, null, null);
                 nextView.setVisibility(View.INVISIBLE);
                 addView(nextView);
@@ -731,20 +793,33 @@ public class MyPageWidget extends FrameLayout {
                 nextViewTranscript.setVisibility(View.INVISIBLE);
                 addView(nextViewTranscript);
             }
-            //运行到这里就没了不会进if里面的代码 itemCount=1
-
         } else {
+            //如果签名册的数量等于0,
+            //那么当前页面索引恢复默认值.-1
             currentPosition = -1;
         }
+
+        //拖拽点归零.
         mTouch.x = 0.01f;
         mTouch.y = 0.01f;
+
         mCornerX = 0;
         mCornerY = 0;
+        /*if (null != mBeforeTurnListener) {
+            PaletteView lastPaletteView
+                    = (PaletteView) MyPageWidget.this
+                    .getChildAt(0)
+                    .findViewById(R.id.palette);
+            if (null != lastPaletteView) {
+                mBeforeTurnListener.onBeforeTurn(lastPaletteView.buildBitmap());
+            }
+        }*/
+        //更新视图
         postInvalidate();
+        //选中第0页的回调.
         if (turnListener != null) {
             turnListener.onTurn(itemCount, currentPosition);
         }
-
     }
 
     /**
@@ -778,14 +853,41 @@ public class MyPageWidget extends FrameLayout {
         currentPosition = page;
         currentView = mAdapter.getView(currentPosition, currentView, null);
 
-        nextView.setVisibility(View.INVISIBLE);
-        nextViewTranscript.setVisibility(View.INVISIBLE);
+        if (nextView != null) {
+            nextView.setVisibility(View.INVISIBLE);
+        }
+        if (null != nextViewTranscript) {
+            nextViewTranscript.setVisibility(View.INVISIBLE);
+        }
+        /*if (null != mBeforeTurnListener) {
+            PaletteView lastPaletteView
+                    = (PaletteView) MyPageWidget.this
+                    .getChildAt(0)
+                    .findViewById(R.id.palette);
+            if (null != lastPaletteView) {
+                mBeforeTurnListener.onBeforeTurn(lastPaletteView.buildBitmap());
+            }
+        }*/
         postInvalidate();
-
         if (turnListener != null) {
             turnListener.onTurn(itemCount, currentPosition);
         }
     }
 
+    public boolean ismIsRTandLB() {
+        return mIsRTandLB;
+    }
 
+    /**
+     * ÓÃÓÚ·­Ò³½áÊøºóµÄÒ³ÂëÍ¨Öª
+     *
+     * @author xf
+     */
+    public interface OnPageBeforeTurnListener {
+        void onBeforeTurn(boolean isFromL2R);//ismIsRTandLB
+    }
+
+    public void setOnOnPageBeforeTurnListener(OnPageBeforeTurnListener listener) {
+        mBeforeTurnListener = listener;
+    }
 }

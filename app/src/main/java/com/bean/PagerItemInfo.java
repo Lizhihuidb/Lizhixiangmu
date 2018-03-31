@@ -16,11 +16,28 @@ public class PagerItemInfo {
     private Path path;
     private View view;
     private List<PaletteView.DrawingInfo> drawingInfos = new ArrayList<>();
+    private String imgPath;
+    private int imgNo;
 
     public PagerItemInfo() {
 
     }
 
+    public int getImgNo() {
+        return imgNo;
+    }
+
+    public void setImgNo(int imgNo) {
+        this.imgNo = imgNo;
+    }
+
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
 
     public Path getPath() {
         return path;

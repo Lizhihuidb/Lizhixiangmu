@@ -4,8 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-    <item android:id="@+id/save" app:showAsAction="always"
-        android:icon="@drawable/ic_save"
+    <!--<item android:id="@+id/save" app:showAsAction="always"-->
+        <!--android:icon="@drawable/ic_save"-->
+          <!--android:titleCondensed="保存图片"-->
+          <!--android:title="保存图片"-->
+        <!--/>-->
+
+    <item android:id="@+id/titles"
+          app:showAsAction="always"
+          android:icon="@drawable/title"
           android:titleCondensed="保存图片"
           android:title="保存图片"
         />

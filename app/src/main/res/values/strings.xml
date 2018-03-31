@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Application</string>
+    <string name="app_name">智能阅读签名系统</string>
 
     <string name="main_help">打开方式：
         \n1：在文件管理器中选中PDF文件，长按文件调出菜单（如果可以），点击发送，选择此应用。

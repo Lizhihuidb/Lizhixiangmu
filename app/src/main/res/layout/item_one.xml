@@ -1,84 +1,138 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    >
+
+    <!--<com.yinghuanhang.pdf.parser.view.MyPageWidget-->
+        <!--android:id="@+id/write_pageWidget"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="880dp"-->
+        <!--android:padding="10dp"-->
+        <!--/>-->
 
     <com.yinghuanhang.pdf.parser.view.MyPageWidget
         android:id="@+id/write_pageWidget"
         android:layout_width="match_parent"
-        android:layout_height="900dp" />
+        android:layout_height="match_parent"
+        android:padding="2dp"
+        />
 
-    <!--<com.activity.PageWidget
-        android:id="@+id/write_pageWidget"
-        android:layout_width="match_parent"
-        android:layout_height="200dp">
-    </com.activity.PageWidget>-->
-
+    <!--<com.activity.PageWidget-->
+        <!--android:id="@+id/write_pageWidget"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="200dp">-->
+    <!--</com.activity.PageWidget>-->
 
     <LinearLayout
+        android:id="@+id/ll_function"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="50dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:layout_marginBottom="15dp"
+        >
 
         <Button
             android:id="@+id/btn_last"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="上一页" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/toolbar_item_bg"
+            android:scaleType="centerInside"
+            android:drawableTop="@drawable/backs"
+            android:text="上一页"
+            />
 
-        <ImageView
+        <Button
             android:id="@+id/undo"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/toolbar_item_bg"
             android:scaleType="centerInside"
-            android:src="@drawable/undo" />
+            android:drawableTop="@drawable/undo"
+            android:text="回退"
+            />
 
-        <ImageView
+        <Button
             android:id="@+id/redo"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/toolbar_item_bg"
             android:scaleType="centerInside"
-            android:src="@drawable/redo" />
+            android:drawableTop="@drawable/redo"
+            android:text="前进"
+            />
 
-        <ImageView
+        <Button
             android:id="@+id/pen"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/toolbar_item_bg"
             android:scaleType="centerInside"
-            android:src="@drawable/pen" />
+            android:drawableTop="@drawable/pen"
+            android:text="签名"
+            />
 
-        <ImageView
+        <Button
             android:id="@+id/eraser"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/toolbar_item_bg"
             android:scaleType="centerInside"
-            android:src="@drawable/eraser" />
+            android:drawableTop="@drawable/eraser"
+            android:text="橡皮"
+            />
 
-        <ImageView
+        <Button
             android:id="@+id/clear"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/toolbar_item_bg"
             android:scaleType="centerInside"
-            android:src="@drawable/clear" />
+            android:drawableTop="@drawable/clear"
+            android:text="清空"
+            />
 
         <Button
             android:id="@+id/btn_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="下一页" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/toolbar_item_bg"
+            android:scaleType="centerInside"
+            android:drawableTop="@drawable/nexts"
+            android:text="下一页"
+            />
 
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/saves"
+            android:background="@drawable/toolbar_item_bg"
+            android:scaleType="centerInside"
+            android:text="保存"
+            />
+
+        <Button
+            android:id="@+id/btn_setting"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/settings"
+            android:background="@drawable/toolbar_item_bg"
+            android:scaleType="centerInside"
+            android:text="设置"
+            />
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

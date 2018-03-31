@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.king.base:base-3.1.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/base-3.1.0.aar/b3c1c7fb835afabd998678f480d8a4f9/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/base-3.1.0.aar/b3c1c7fb835afabd998678f480d8a4f9/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.king.base/base/3.1.0/4cce5fc020dd88c170c974e914e5df89cc7be69f/base-3.1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

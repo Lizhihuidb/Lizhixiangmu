@@ -11,7 +11,7 @@
     <uses-permission
         android:name="android.hardware.usb.host"
         android:required="false" />
-    <!--//因为部分手机上是没有otg的所以需要加入特性。-->
+    <!-- //因为部分手机上是没有otg的所以需要加入特性。 -->
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true" />
@@ -58,10 +58,22 @@
             android:screenOrientation="landscape" />
         <activity android:name="com.activity.WriteActivity" />
         <activity android:name="com.activity.MyWriteActivity" />
-        <activity android:name="com.usbtest.uMainActivity" />
+        <activity
+            android:name="com.usbtest.uMainActivity"
+            android:screenOrientation="landscape" />
         <activity android:name="com.activity.MyMainActivity" />
-        <activity android:name="com.activity.MyPdfActivity" />
+        <activity
+            android:name="com.activity.MyPdfActivity"
+            android:screenOrientation="landscape" />
         <activity android:name="com.activity.MyPhotoActivity" />
+        <activity
+            android:name="com.activity.LookActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name="com.activity.ContentActivity" />
+        <activity android:name="com.activity.ExportImportActivity" />
+        <activity android:name="com.activity.ExportActivity"
+            android:screenOrientation="landscape"
+            />
     </application>
 
 </manifest>

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Wirte.iml" filepath="$PROJECT_DIR$/Wirte.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MyWriteRead.iml" filepath="$PROJECT_DIR$/MyWriteRead.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/library-progressblackbox/library-progressblackbox.iml" filepath="$PROJECT_DIR$/library-progressblackbox/library-progressblackbox.iml" />
     </modules>

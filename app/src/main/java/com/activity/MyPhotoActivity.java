@@ -17,6 +17,7 @@ import android.widget.GridView;
 
 import com.file.zip.ZipEntry;
 import com.file.zip.ZipFile;
+import com.utils.SDCardUtils;
 import com.yinghuanhang.pdf.parser.R;
 import com.yinghuanhang.pdf.parser.application.MyApplication;
 import com.yinghuanhang.pdf.parser.db.TxtInfoDao;

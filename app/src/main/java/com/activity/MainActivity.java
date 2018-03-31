@@ -15,6 +15,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.utils.SDCardUtils;
 import com.yinghuanhang.pdf.parser.R;
 
 import org.apache.commons.io.FileUtils;

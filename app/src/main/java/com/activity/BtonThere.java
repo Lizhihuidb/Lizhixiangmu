@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import com.utils.SDCardUtils;
+import com.utils.WordUtil;
 import com.yinghuanhang.pdf.parser.R;
 
 public class BtonThere extends Activity {
